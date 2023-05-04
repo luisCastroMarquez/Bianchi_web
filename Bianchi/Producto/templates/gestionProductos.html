@@ -1,0 +1,93 @@
+{% extends './base.html' %}
+
+{% block tittle %} Ya estamos en el Formulario {% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+            {% if messages %}
+            {% for messages in messages %}
+            <div class="alert alert-dismissible alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span class="text-dark">{{ messages }}</span trong>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <h2> Gestión productos </h2>
+            <div class="card">
+                <div class="card-body">
+                    <form action="/registrarProducto/" method="POST"> {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" id="txtCodigo" name="txtCodigo" class="form-control" placeholder="Id" minlength="2" maxlength="20" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="txtNombre" name="txtNombre" class="form-control" placeholder="Nombre" maxlength="40" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="numCantidad" name="numCantidad" class="form-control" placeholder="Cantidad" min="1" max="9" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+            <h1> Listado productos </h1>
+            <div class="table-responsive py-3">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th colspan="2">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in productos%}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{p.codigo}}</td>
+                            <td>{{p.nombre}}</td>
+                            <td>{{p.cantidad}}</td>
+                            <td><a href="edicionProducto/{{p.codigo}}" class="btn btn-info">Editar</a></td>
+                            <td><a href="eliminarProducto/{{p.codigo}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="row ">
+                <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+                    <div class="pagination-responsive
+                    ">
+                        <ul class="pagination justify-content-center">
+                            {% if productos.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ productos.previous_page_number }}">Prev</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="#">Prev</a></li>
+                            {% endif %}
+
+                            {% for i in productos.paginator.page_range %}
+                            {% if productos.number == i %}
+                            <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if productos.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ productos.next_page_number }}">Next</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
